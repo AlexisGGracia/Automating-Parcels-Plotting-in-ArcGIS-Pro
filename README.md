@@ -15,7 +15,7 @@ In this section, I have included images that demonstrates the final product of m
 
 ![SC1](https://github.com/user-attachments/assets/3c0bfd72-6d8e-4b8f-aa28-35aa16d593ab)
 ![SC2](https://github.com/user-attachments/assets/c3d17219-bb17-47b0-8314-94063c762bc5)
-![SC3](https://github.com/user-attachments/assets/a05b7160-e2b2-43e2-80a4-c0c982cd7caf)
+![SC3](https://github.com/user-attachments/assets/e114a0a3-1333-4b14-ac6f-54377539b38f)
 ![CS4](https://github.com/user-attachments/assets/2dfefa65-8b77-49a4-9336-92de5c340583)
   
 ## Requirements
