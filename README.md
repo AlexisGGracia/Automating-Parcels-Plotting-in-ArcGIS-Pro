@@ -4,7 +4,7 @@ Description: This project automates the plotting of parcels on a 2D map in ArcGI
 
 Who is it for? This project was made for the GIS team during my internship with the Harris County Engineering Department as a geospatial software development intern
 
-# Visual Results:
+# Visual Results
 In this section, I have included images that demonstrates the final product of my code. The green figures were made manually which takes about 2-5 minutes to generate. The figure with a distinct color was made using my code automatically which takes less than 3 seconds to generate.
 
 ## Green Color Figure: 
@@ -18,7 +18,7 @@ In this section, I have included images that demonstrates the final product of m
 ![SC3](https://github.com/user-attachments/assets/e114a0a3-1333-4b14-ac6f-54377539b38f)
 ![CS4](https://github.com/user-attachments/assets/2dfefa65-8b77-49a4-9336-92de5c340583)
 
-## Used By:
+## Used By
 
 This project is used by the following company:
 
