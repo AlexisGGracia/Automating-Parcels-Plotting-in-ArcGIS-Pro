@@ -16,7 +16,7 @@ In this section, I have included images that demonstrates the final product of m
 ![SC1](https://github.com/user-attachments/assets/3c0bfd72-6d8e-4b8f-aa28-35aa16d593ab)
 ![SC2](https://github.com/user-attachments/assets/c3d17219-bb17-47b0-8314-94063c762bc5)
 ![SC3](https://github.com/user-attachments/assets/a05b7160-e2b2-43e2-80a4-c0c982cd7caf)
-![CS4](https://github.com/user-attachments/assets/8e679570-3193-4e46-9b00-2b5b11b6df0b)
+![CS4](https://github.com/user-attachments/assets/2dfefa65-8b77-49a4-9336-92de5c340583)
   
 ## Requirements
 
