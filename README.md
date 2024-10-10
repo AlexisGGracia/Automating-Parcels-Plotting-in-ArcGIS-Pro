@@ -40,8 +40,7 @@ To run this project, you will need the following software and tools:
 
 You can install the Python libraries using `pip`:
 
-``bash
-pip install numpy matplotlib pandas
+`pip install numpy matplotlib pandas`
 
 ## Contact
 Alexis Gracia
