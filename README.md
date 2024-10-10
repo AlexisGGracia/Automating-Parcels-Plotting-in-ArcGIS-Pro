@@ -108,15 +108,5 @@ This project is used by the following company:
 This project was developed and maintained by:
 
 - **Alexis Gracia**  
-  [GitHub Profile](https://github.com/alexisgracia)  
-  [Email](mailto:alexis@example.com)
-
-
-
-## Contact
-Alexis Gracia
-agg3455@my.utexas.edu
-
-  
-
- 
+  [GitHub Profile](https://github.com/AlexisGGracia/Phoenix1543)  
+  [Email](agg3455@my.utexas.edu)
