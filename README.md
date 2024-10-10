@@ -7,41 +7,63 @@ Who is it for? This project was made for the GIS team during my internship with 
 
 # Code Breakdown and Workflow
 
-This section provides a detail explanation of the logic and steps involved in the code
-    1. ** Read the input file, splitting the content into complete words
-        - The script starts by reading a txt file that contains the information needed to draw the parcels
-        - The txt files provide the coordinates in a specific format to generate a general pattern that allows the code to work for multiple files
-        - Example: 
-            - North 26 degrees 25 minutes 30 seconds East, with a distance of 15.6 ft
-            - South 26° 25' 30" West, with a distance of 15.6 ft
-            - North 26°25'30" East - 15.6 ft
-    2. Extract the information required such as degrees, minutes, seconds, distance, and directions from the txt file
-    3. Include an if statement file that checks if there is any missing information in case the code failed to extract all of the required information
-        - In this section, it checks for the lenght of degrees, minutes, seconds, distance, and directions.
-        - If the code successfully extracted all information, the code continues. Else, it prompts a warning sign with hints to help debug the location of the problem
-    4. Converts the given coordinates and distances such as North 26°25'30" East - 15.6 ft and converts it to cartesian XY points
-        - To do so, we need to find the bearing angles to convert from polar coordinates to XY points
-        # STEPS to convert from DMS to XY points
-            - Find the decimal degree
-                decimal_degree = degrees + (minutes / 60) + (seconds / 3600)
-            - Convert decimal_degree to bearing angle
-                - if directiosn are NE then bearing angle = decimal_degrees
-                - if directions are SE, then bearing anle = 180 - decimal_degrees
-                - if directions are SW, then bearing angle = 180 + decimal_degrees
-                - if directions are NW, then bearing angle = 360 - decimal_degrees
-    5. Convert from polar coordinates to XY points:
-        # STEPS
-            - angle = 90 - bearing angle
-            - X = distance*cos(angle)
-            - Y = distance*sin(angle)
-    6. Pass the XY points to arcpy.da.InsertCursor function to plot the XY points as polygons
-        #STEPS:
-            - Define a database
-            - Define a feature class (Example: "TraversedLines"
-            - Define a spatial reference (2278 corresponds to South Texas Central and this spatial reference should be changed based on desire geographic location)
-            - Define a polygon using the points (make sure the first and last points are the same to close the polygon)
-            - use arcpy.da.InsertCursor to access the traverse tool and insert the XY points for each row
-    # Important Notes: Your starting point and your last point generated should be the same to close the polygon. Additionally, when computing your XY points, you need to use the previous point as your new starting point for the next XY points. Else, your shape will be                         innacurate    
+This section provides a detailed explanation of the logic and steps involved in the code.
+
+1. **Read the input file, splitting the content into complete words**
+    - The script starts by reading a `.txt` file that contains the information needed to draw the parcels.
+    - The `.txt` files provide the coordinates in a specific format to generate a general pattern that allows the code to work for multiple files.
+    - Example: 
+        - North 26 degrees 25 minutes 30 seconds East, with a distance of 15.6 ft
+        - South 26° 25' 30" West, with a distance of 15.6 ft
+        - North 26°25'30" East - 15.6 ft
+
+2. **Extract the information required such as degrees, minutes, seconds, distance, and directions from the `.txt` file.**
+
+3. **Include an if statement that checks if there is any missing information in case the code failed to extract all the required information.**
+    - In this section, it checks for the length of degrees, minutes, seconds, distance, and directions.
+    - If the code successfully extracts all the information, it continues. Otherwise, it prompts a warning sign with hints to help debug the location of the problem.
+
+4. **Convert the given coordinates and distances such as "North 26°25'30" East - 15.6 ft" to Cartesian XY points.**
+    - To do so, we need to find the bearing angles to convert from polar coordinates to XY points.
+    
+    **Steps to convert from DMS to XY points:**
+    ```python
+    # Find the decimal degree
+    decimal_degree = degrees + (minutes / 60) + (seconds / 3600)
+    
+    # Convert decimal degree to bearing angle:
+    if directions are NE:
+        bearing_angle = decimal_degrees
+    if directions are SE:
+        bearing_angle = 180 - decimal_degrees
+    if directions are SW:
+        bearing_angle = 180 + decimal_degrees
+    if directions are NW:
+        bearing_angle = 360 - decimal_degrees
+    ```
+
+5. **Convert from polar coordinates to XY points:**
+
+    **Steps:**
+    ```python
+    angle = 90 - bearing_angle
+    X = distance * cos(angle)
+    Y = distance * sin(angle)
+    ```
+
+6. **Pass the XY points to the `arcpy.da.InsertCursor` function to plot the XY points as polygons.**
+
+    **Steps:**
+    - Define a database.
+    - Define a feature class (Example: `TraversedLines`).
+    - Define a spatial reference (2278 corresponds to South Texas Central and should be changed based on the desired geographic location).
+    - Define a polygon using the points (make sure the first and last points are the same to close the polygon).
+    - Use `arcpy.da.InsertCursor` to access the traverse tool and insert the XY points for each row.
+
+### Important Notes:
+- Your starting point and your last point generated should be the same to close the polygon.
+- Additionally, when computing your XY points, you need to use the previous point as your new starting point for the next XY points. Otherwise, your shape will be inaccurate.
+
   
 ## Requirements 
 To run this project, you will need the following software and tools:
