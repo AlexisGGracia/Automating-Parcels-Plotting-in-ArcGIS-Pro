@@ -96,11 +96,12 @@ In this section, I have included images that demonstrates the final product of m
 ![SC3](https://github.com/user-attachments/assets/e114a0a3-1333-4b14-ac6f-54377539b38f)
 ![CS4](https://github.com/user-attachments/assets/2dfefa65-8b77-49a4-9336-92de5c340583)
 
-## Used By
+## Project Usage
 
 This project is used by the following company:
-    - `Office of the County Engineer
-        - `GIS Team
+- **Office of the County Engineer**
+    - GIS Team
+
 
 ## Contact
 Alexis Gracia
