@@ -6,6 +6,7 @@ This project automates the plotting of parcels on a 2D map in ArcGIS Pro using a
 Who is it for? This project was made for the GIS team during my internship with the Harris County Engineering Department as a geospatial software development intern
 
 # Code Breakdown and Workflow
+
 This section provides a detail explanation of the logic and steps involved in the code
     1. Read the input file, splitting the content into complete words
         - The script starts by reading a txt file that contains the information needed to draw the parcels
