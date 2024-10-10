@@ -99,6 +99,7 @@ In this section, I have included images that demonstrates the final product of m
 ## Project Usage
 
 This project is used by the following company:
+
 - **Office of the County Engineer**
     - GIS Team
 
