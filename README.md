@@ -109,4 +109,5 @@ This project was developed and maintained by:
 
 - **Alexis Gracia**  
   [GitHub Profile](https://github.com/AlexisGGracia/Phoenix1543)  
-  [Email](agg3455@my.utexas.edu)
+  [Email](mailto:agg3455@my.utexas.edu)
+
