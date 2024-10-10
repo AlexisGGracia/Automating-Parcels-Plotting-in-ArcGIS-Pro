@@ -8,7 +8,7 @@ Who is it for? This project was made for the GIS team during my internship with 
 # Code Breakdown and Workflow
 
 This section provides a detail explanation of the logic and steps involved in the code
-    1. Read the input file, splitting the content into complete words
+    1. ** Read the input file, splitting the content into complete words
         - The script starts by reading a txt file that contains the information needed to draw the parcels
         - The txt files provide the coordinates in a specific format to generate a general pattern that allows the code to work for multiple files
         - Example: 
@@ -41,7 +41,7 @@ This section provides a detail explanation of the logic and steps involved in th
             - Define a spatial reference (2278 corresponds to South Texas Central and this spatial reference should be changed based on desire geographic location)
             - Define a polygon using the points (make sure the first and last points are the same to close the polygon)
             - use arcpy.da.InsertCursor to access the traverse tool and insert the XY points for each row
-    #Important Notes: Your starting point and your last point generated should be the same to close the polygon. Additionally, when computing your XY points, you need to use the previous point as your new starting point for the next XY points. Else, your shape will be                         innacurate    
+    # Important Notes: Your starting point and your last point generated should be the same to close the polygon. Additionally, when computing your XY points, you need to use the previous point as your new starting point for the next XY points. Else, your shape will be                         innacurate    
   
 ## Requirements 
 To run this project, you will need the following software and tools:
