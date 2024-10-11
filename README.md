@@ -26,7 +26,7 @@ This section provides a detailed explanation of the logic and steps involved in 
 4. **Convert the given coordinates and distances such as "North 26°25'30" East - 15.6 ft" to Cartesian XY points.**
     - To do so, we need to find the bearing angles to convert from polar coordinates to XY points.
     
-    **Steps to convert from DMS to XY points:**
+    **Steps to convert from DMS to bearing angles:**
     ```python
     # Find the decimal degree
     decimal_degree = degrees + (minutes / 60) + (seconds / 3600)
@@ -42,7 +42,7 @@ This section provides a detailed explanation of the logic and steps involved in 
         bearing_angle = 360 - decimal_degrees
     ```
 
-5. **Convert from polar coordinates to XY points:**
+5. **Convert from polar coordinates using the bearing angle to XY points:**
 
     **Steps:**
     ```python
