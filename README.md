@@ -1,7 +1,7 @@
 # Automating Parcel Plotting in ArcGIS Pro with Python Using 'arcpy' Library
 
 # Introduction
-This project automates the plotting of parcels on a 2D map in ArcGIS Pro using a Python script. The script reads a TXT file containing coordinates in degrees, minutes, seconds, directions (N/S/E/W), and distances. It then converts the coordinates to XY points and uses the arcpy library to access the Traverse Tool and automatically plot each point on the map as polygons.
+This project automates the plotting of property parcels on a 2D map in ArcGIS Pro using a Python script, enabling the company and clients to visually analyze property boundaries more efficiently. The script reads a TXT file containing coordinates in degrees, minutes, seconds, directions (N/S/E/W), and distances. It then converts the coordinates to XY points and uses the arcpy library to access the Traverse Tool and automatically plot each point on the map as polygons.
 
 Who is it for? This project was made for the GIS team during my internship with the Harris County Engineering Department as a geospatial software development intern
 
