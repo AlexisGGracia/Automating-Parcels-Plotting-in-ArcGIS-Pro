@@ -53,7 +53,22 @@ for file_name in os.listdir():
 
         #Extracting degrees, minutes, seconds from content(txt_file splitted)
         for i in range(len(content)):
-
+             # Skip if the current entry is preceded by "delta angle of"
+            if 'delta' in content[i-4:i] and 'angle' in content[i-4:i]:
+                print(f"Skipping entry: {content[i]} because of 'delta angle of'")
+                continue  # Skip further processing for this entry
+        
+            
+            # Check if the current word contains a full degrees, minutes, and seconds format
+            match_full = re.findall(r'(\d+)°(\d+)\'(\d+)"', content[i])
+            if match_full:
+                # If the full match is found, skip further degrees/minutes/seconds checks for this entry
+                for degree, minute, second in match_full:
+                    degrees.append(float(degree))
+                    minutes.append(float(minute))
+                    seconds.append(float(second))
+                continue  # Skip further checks for this entry since we already extracted the full set
+            
             # Check if the current word indicates degrees in different formats
             if content[i] in ['degrees', 'deg.', 'DEG.', 'DEG .', 'DEG'] and content[i-4] != 'delta' and content[i-3] != 'angle':
                 if content[i - 2] in ['South', 'south', 'SOUTH', 'North', 'north', 'NORTH']:
@@ -62,17 +77,17 @@ for file_name in os.listdir():
                         degrees_value = re.sub(r'\D', '', content[i - 1])  # Remove non-digit characters
                         if degrees_value:  # Check if the result is not empty
                             degrees.append(float(degrees_value))
-
+            
             # Check if the current word contains a number with the degree symbol
             match_degrees = re.findall(r'(\d+)°', content[i])
             if match_degrees and content[i - 1] in ['South', 'south', 'SOUTH', 'North', 'north', 'NORTH']:
                 degrees.extend([float(m) for m in match_degrees])
-
+            
             # Check if the current word contains a number with the minute symbol
             match_minutes = re.findall(r'(\d+)\'', content[i])
             if match_minutes and content[i - 2] in ['South', 'south', 'SOUTH', 'North', 'north', 'NORTH']:
                 minutes.extend([float(m) for m in match_minutes])
-
+        
             # Check if the current word contains a number with the second symbol
             match_seconds = re.findall(r'(\d+)"', content[i])               #defines the number next to '
             minutes_value_checking = re.findall(r'(\d+)\'', content[i-1])   #defines the number next to "
@@ -80,27 +95,27 @@ for file_name in os.listdir():
             if minutes_value_checking and match_degrees and content[i + 1] in ['West', 'west', 'WEST','West,', 'East', 'east', 'EAST', 'East,']:                    #if statements checks that the seconds extracted is next to minutes and degrees             
                 # print(content[i])
                 seconds.extend([float(m) for m in match_seconds])
-
+        
             # Alternatively, handle variations for minutes
             elif content[i] in ['minutes', 'min', 'mn', 'MIN.', 'mn.', 'min.'] and content[i-6] != 'delta' and content[i-5] != 'angle':
                 if i > 0:
                     minutes_value = re.sub(r'\D', '', content[i - 1])  # Remove non-digit characters
                     if minutes_value:
                         minutes.append(float(minutes_value))
-
+        
             # Alternatively, handle variations for seconds
             elif content[i] in ['seconds', 'sec.', 'SEC.', 'seconds,'] and content[i-8] != 'delta' and content[i-7] != 'angle':
                 if i > 0:
                     seconds_value = re.sub(r'\D', '', content[i - 1])  # Remove non-digit characters
                     if seconds_value:
                         seconds.append(float(seconds_value))
-        
+                
 
 
         #Extracting the distances that correspond to each coordinate
         for i in range(len(content)):
             if content[i] in ['distance', 'DISTANCE', 'line,', 'Line,', 'Line', 'Lot', 'lot', 'right-of-way']:
-
+                
                 # first if statement is for distances on files where the word distance is not specified
                 if i + 2 < len(content):
                     if content[i] in ['Line,', 'line,', 'Line']:
@@ -122,7 +137,7 @@ for file_name in os.listdir():
                             # print(i)
                         except ValueError:
                             pass #Ignore if conversion fails
-
+        
                     elif content[i] in ['right-of-way']:
                         # print(content[i+7])
                         distance_str = content[i+7]
@@ -130,17 +145,16 @@ for file_name in os.listdir():
                             distances.append(float(distance_str))
                         except ValueError:
                             pass #Ignore if conversion fails
-
+        
                     elif content[i] in ['distance', 'DISTANCE']:
                         distance_str = content[i + 2]
                         distance_str = distance_str.replace(',','')
-                        try:
-
-                            distances.append(float(distance_str))
-                            # print(distance_str)
+                        try:   
+                             distances.append(float(distance_str))
+                              # print(distance_str)
                         except ValueError:
-                            pass  # Ignore if conversion fails
-
+                             pass  # Ignore if conversion fails
+        
             elif content[i] in ['-', 'WEST-', 'EAST-', 'West,', 'East,', 'East']:      
                 if i + 1 < len(content):
                     if content[i] == ['-'] and content[i-1] != ['West', 'WEST', 'West,', 'East','EAST', 'East,']:
@@ -159,17 +173,23 @@ for file_name in os.listdir():
                         except ValueError:
                             pass  # Ignore if conversion fails
 
+        for i in range(len(distances)):
+            if len(distances) > len(degrees) and i >= 1:
+                print('A consecutive repeated value has been removed from the list of distances')
+                print('The extra value does not correspond to any DMS and has been mentioned to verbally describe a direction')
+                if distances[i] == distances[i-1]:
+                    distances.remove(distances[i])
 
 
         #Extracting the directions
         for i in range(len(content)):
-            if content[i] in ['North', 'NORTH']:
+            if content[i] in ['North', 'NORTH', '.North', '.NORTH']:
                 # Look ahead at the next word(s) for the number (degree) and handle both cases
                 next_word = content[i + 1] if i + 1 < len(content) else ""
-
+        
                 # Case 1: The degree symbol is present (e.g., "87°")
                 match_degrees_symbol = re.findall(r'(\d+)', next_word)
-
+        
                 # Case 2: The word "degrees" is explicitly mentioned after the number (e.g., "87 degrees")
                 match_degrees_word = re.findall(r'(\d+)', content[i + 1]) if (i + 2 < len(content) and content[i + 2] in ['degrees', 'deg.', 'DEG.', 'DEG .']) else []
                 # Check if either the degree symbol or the word "degrees" was found
@@ -177,47 +197,47 @@ for file_name in os.listdir():
                     degree_value = match_degrees_symbol[0] if match_degrees_symbol else match_degrees_word[0]
                     directions.append('n')  # Append the direction 'n' for North
                 # print(content[i])
-
-            elif content[i] in ['South', 'SOUTH', 'South']:
+        
+            elif content[i] in ['South', 'SOUTH', 'South', '.South', '.SOUTH']:
                 # Look ahead at the next word(s) for the number (degree) and handle both cases
                 next_word = content[i + 1] if i + 1 < len(content) else ""
                 # Case 1: The degree symbol is present (e.g., "87°")
                 match_degrees_symbol = re.findall(r'(\d+)', next_word)
                 # Case 2: The word "degrees" is explicitly mentioned after the number (e.g., "87 degrees")
                 match_degrees_word = re.findall(r'(\d+)', content[i + 1]) if (i + 2 < len(content) and content[i + 2] in ['degrees', 'deg.', 'DEG.', 'DEG .']) else []
-
+                
                 # Check if either the degree symbol or the word "degrees" was found
                 if match_degrees_symbol or match_degrees_word:
                     degree_value = match_degrees_symbol[0] if match_degrees_symbol else match_degrees_word[0]
                     directions.append('s')  # Append the direction 'n' for North
                 # print(content[i])
-
+        
             elif content[i] in ['East', 'EAST-',  'East,', 'EAST,']:
-
+            
                 previous_word = content[i-1] if i - 1 >= 0 else ""
                 #case 1: The seconds symbol is present ( e.g., "87' ")
                 match_seconds_symbol = re.findall(r'(\d+)"', previous_word)
                 # case 2: "seconds" is explicitly mentioned before the number (e.g., " 87 seconds")
                 match_seconds_word = re.findall(r'(\d+)', content[i-2]) if (i-2 >= 0 and content[i-1] in ['seconds', 'sec.', 'SEC.', 'seconds,']) else []
-
+                
                 #chekc if either the seconds symbol or the word "seconds" was found
                 if match_seconds_symbol or match_seconds_word:
                     seconds_value = match_seconds_symbol[0] if match_seconds_symbol else match_seconds_word[0]
                     directions.append('e')
-
-
+        
+        
             elif content[i] in ['West', 'WEST-',  'West,', 'WEST,', 'WEST']:
                 previous_word = content[i-1] if i - 1 >= 0 else ""
                 #case 1: The seconds symbol is present ( e.g., "87' ")
                 match_seconds_symbol = re.findall(r'(\d+)"', previous_word)
                 # case 2: "seconds" is explicitly mentioned before the number (e.g., " 87 seconds")
                 match_seconds_word = re.findall(r'(\d+)', content[i-2]) if (i-2 >= 0 and content[i-1] in ['seconds', 'sec.', 'SEC.', 'seconds,']) else []
-
+                
                 #chekc if either the seconds symbol or the word "seconds" was found
                 if match_seconds_symbol or match_seconds_word:
                     seconds_value = match_seconds_symbol[0] if match_seconds_symbol else match_seconds_word[0]
                     directions.append('w')
-
+               
         #Extracts arc length for curves when included
         for i in range(len(content)):
             if content[i] in ['arc']:
@@ -335,12 +355,13 @@ for file_name in os.listdir():
                 bearing_angle = 360 - dd
 
             return bearing_angle
+        #For loop storing the bearing angles calculated
         bearing_angle = []
         for i in range(len(degrees)):
             bearing = calculate_bearing_angle(degrees[i], minutes[i], seconds[i], direction_latitude[i], direction_longitude[i])
             bearing_angle.append(bearing)
 
-        # Finding the new x,y coordinates
+        # Finding the new x,y coordinates using the bearing angles and the distances
         def cartesian_converter (bearing_angle, distance):
             angle = (90-bearing_angle)*(mt.pi/180)
             x = distance*mt.cos(angle)
@@ -349,7 +370,7 @@ for file_name in os.listdir():
             return x,y
         X = [start_x]
         Y = [start_y]
-        # Accumulate coordinates correctly
+        # Accumulate coordinates correctly in the right sequence such that each new point is at a distance away from the previous point
         for i in range(len(bearing_angle)):
             x_offset, y_offset = cartesian_converter(bearing_angle[i], distances[i])
             new_x = X[-1] + x_offset
@@ -358,7 +379,8 @@ for file_name in os.listdir():
             Y.append(new_y)
 
         coordinates = list(zip(X, Y))
-#       print(coordinates)
+        print(coordinates)
+
         # Path to geodatabase and feature class
         output_gdb = r"C:\Users\alexis.graciarodrigu\Desktop\HCPropertyInventory_Pro.gdb"
         feature_class = "TraversedLines"
@@ -375,10 +397,8 @@ for file_name in os.listdir():
             polygon = arcpy.Polygon(array, spatial_ref)
             cursor.insertRow([polygon])
 
-#         # Example processing: Count the number of words in the file
-#         word_count = len(content)
-#         print(f"Word count for {file_name}: {word_count}")
-
+        #Example processing: Count the number of words in the file
+        #word_count = len(content)
+        #print(f"Word count for {file_name}: {word_count}")
         # After processing the file, the script will continue to the next one
 
-# After all files are processed, you can perform any final steps if needed
