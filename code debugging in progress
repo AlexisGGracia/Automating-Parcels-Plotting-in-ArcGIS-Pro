@@ -1,0 +1,32 @@
+# code debugging in progress
+
+#Initial data processing .....
+..
+..
+..
+..
+..
+
+
+coordinates = list(zip(X, Y))
+print(coordinates)
+
+# Path to geodatabase and feature class
+output_gdb = r"C:\Users\alexis.graciarodrigu\Desktop\HCPropertyInventory_Pro.gdb"
+
+# Set spatial reference
+spatial_ref = arcpy.SpatialReference(2278)
+
+arcpy.env.workspace = r'C:\Users\alexis.graciarodrigu\Desktop\PID.sde\HCPID_GDB.PID.Land\HCPID_GDB.PID.RPD_HCOwnedProperty'
+ws = arcpy.env.workspace
+fc = f'{ws}\HCPID_GDB.PID.RPD_HCOwnedProperty'
+
+
+
+# Define a polygon using the points (make sure the first and last points are the same to close the polygon)
+polygon_points = coordinates + [coordinates[0]]  # Closing the loop
+
+with arcpy.da.InsertCursor(output_gdb + "\\" + feature_class, ['SHAPE@']) as cursor:
+    array = arcpy.Array([arcpy.Point(x, y) for x, y in polygon_points])
+    polygon = arcpy.Polygon(array, spatial_ref)
+    cursor.insertRow([polygon])
