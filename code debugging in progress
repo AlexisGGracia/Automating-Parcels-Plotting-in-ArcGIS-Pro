@@ -30,3 +30,38 @@ with arcpy.da.InsertCursor(output_gdb + "\\" + feature_class, ['SHAPE@']) as cur
     array = arcpy.Array([arcpy.Point(x, y) for x, y in polygon_points])
     polygon = arcpy.Polygon(array, spatial_ref)
     cursor.insertRow([polygon])
+
+
+
+#FIRST ATTEMPT TO SOLVE IT
+import arcpy
+
+# Initial data processing...
+# (Your data processing code here)
+# ...
+
+# Example coordinates (ensure you define X and Y properly in your processing)
+coordinates = list(zip(X, Y))
+print(coordinates)
+
+# Path to geodatabase and feature class
+output_gdb = r"C:\Users\alexis.graciarodrigu\Desktop\HCPropertyInventory_Pro.gdb"
+
+# Set spatial reference
+spatial_ref = arcpy.SpatialReference(2278)
+
+# Set the workspace
+arcpy.env.workspace = r'C:\Users\alexis.graciarodrigu\Desktop\PID.sde'
+
+# Define the full path to the feature class
+# Use double backslashes or raw string format to avoid issues with escape characters
+fc = r'C:\Users\alexis.graciarodrigu\Desktop\PID.sde\HCPID_GDB.PID.Land\HCPID_GDB.PID.RPD_HCOwnedProperty'
+
+# Define a polygon using the points (make sure the first and last points are the same to close the polygon)
+polygon_points = coordinates + [coordinates[0]]  # Closing the loop
+
+# Insert the polygon into the feature class
+with arcpy.da.InsertCursor(fc, ['SHAPE@']) as cursor:
+    array = arcpy.Array([arcpy.Point(x, y) for x, y in polygon_points])
+    polygon = arcpy.Polygon(array, spatial_ref)
+    cursor.insertRow([polygon])
