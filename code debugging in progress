@@ -137,3 +137,18 @@ case 2: North 87°57' 34" East
 case 3: South 02° 02' 26" East
 
 
+
+
+# Regular expression to match degrees, minutes, seconds with optional spaces and fixed directional indicators
+match_full = re.findall(r'(North|South)\s*(\d+)\s*°\s*(\d+)\s*\'\s*(\d+)"\s*(East|West)', content[i])
+
+if match_full:
+    # If the full match is found, process the components
+    for direction1, degree, minute, second, direction2 in match_full:
+        degrees.append(float(degree))
+        minutes.append(float(minute))
+        seconds.append(float(second))
+        # You can also store or process the directions (direction1 and direction2) if needed
+
+
+
