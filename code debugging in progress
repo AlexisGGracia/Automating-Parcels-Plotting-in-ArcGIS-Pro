@@ -120,3 +120,15 @@ finally:
     # Stop editing session
     edit.stopEditing(True)  # Save changes
 
+
+
+# Check if the current word contains a full degrees, minutes, and seconds format
+match_full = re.findall(r'(\d+)°(\d+)\'\s*(\d+)"', content[i])
+if match_full:
+    # If the full match is found, skip further degrees/minutes/seconds checks for this entry
+    for degree, minute, second in match_full:
+        degrees.append(float(degree))
+        minutes.append(float(minute))
+        seconds.append(float(second))
+
+
