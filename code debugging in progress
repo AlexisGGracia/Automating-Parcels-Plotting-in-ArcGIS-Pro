@@ -132,9 +132,9 @@ if match_full:
         seconds.append(float(second))
 
 
-case 1: North 72°07'56" East
-case 2: North 87°57' 34" East
-case 3: South 02° 02' 26" East
+case 1:  72°07'56" 
+case 2:  87°57' 34" 
+case 3:  02° 02' 26" 
 
 
 
@@ -177,6 +177,57 @@ if match_full:
         minutes.append(float(minute))
         seconds.append(float(second))
     continue  # Skip further checks for this entry since we already extracted the full set
+
+
+
+
+import re
+
+# Example content simulating your cases
+content = [
+    '72°07\'56"',  # Case 1: no spaces between components
+    '87°57\' 34"',  # Case 2: space between minutes and seconds
+    '02° 02\' 26"'  # Case 3: space between degrees, minutes, and seconds
+]
+
+# Initialize lists to store extracted degrees, minutes, and seconds
+degrees = []
+minutes = []
+seconds = []
+
+# Loop through the content and apply specific regex for each case
+for i in range(len(content)):
+    # Case 1: Handle no spaces between degrees, minutes, and seconds
+    match_case1 = re.findall(r'(\d+)°(\d+)\'(\d+)"', content[i])
+    
+    # Case 2: Handle space between minutes and seconds
+    match_case2 = re.findall(r'(\d+)°(\d+)\'\s*(\d+)"', content[i])
+    
+    # Case 3: Handle spaces between degrees, minutes, and seconds
+    match_case3 = re.findall(r'(\d+)\s*°\s*(\d+)\s*\'\s*(\d+)\s*"', content[i])
+    
+    # Check for matches and append the extracted values
+    if match_case1:
+        for degree, minute, second in match_case1:
+            degrees.append(float(degree))
+            minutes.append(float(minute))
+            seconds.append(float(second))
+    elif match_case2:
+        for degree, minute, second in match_case2:
+            degrees.append(float(degree))
+            minutes.append(float(minute))
+            seconds.append(float(second))
+    elif match_case3:
+        for degree, minute, second in match_case3:
+            degrees.append(float(degree))
+            minutes.append(float(minute))
+            seconds.append(float(second))
+
+# Output the extracted degrees, minutes, and seconds
+print("Degrees:", degrees)
+print("Minutes:", minutes)
+print("Seconds:", seconds)
+
 
 
 
