@@ -232,4 +232,34 @@ print("Seconds:", seconds)
 
 
 
+import re
+
+# Example content simulating your cases
+content = [
+    '72°07\'56"',  # Case 1: no spaces between components
+    '87°57\' 34"',  # Case 2: space between minutes and seconds
+    '02° 02\' 26"'  # Case 3: space between degrees, minutes, and seconds
+]
+
+# Initialize lists to store extracted degrees, minutes, and seconds
+degrees = []
+minutes = []
+seconds = []
+
+# Loop through the content and apply the updated regex
+for i in range(len(content)):
+    # Regular expression to handle optional spaces between components
+    match = re.findall(r'(\d+)\s*°\s*(\d+)\s*\'\s*(\d+)\s*"', content[i])
+    
+    # Check for matches and append the extracted values
+    if match:
+        for degree, minute, second in match:
+            degrees.append(float(degree))
+            minutes.append(float(minute))
+            seconds.append(float(second))
+
+# Output the extracted degrees, minutes, and seconds
+print("Degrees:", degrees)
+print("Minutes:", minutes)
+print("Seconds:", seconds)
 
