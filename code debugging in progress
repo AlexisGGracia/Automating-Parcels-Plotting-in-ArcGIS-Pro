@@ -152,3 +152,19 @@ if match_full:
 
 
 
+
+
+# Updated regular expression to allow optional spaces between degrees, minutes, and seconds
+match_full = re.findall(r'(\d+)\s*°\s*(\d+)\s*\'\s*(\d+)\s*"', content[i])
+
+if match_full:
+    # If the full match is found, skip further degrees/minutes/seconds checks for this entry
+    for degree, minute, second in match_full:
+        degrees.append(float(degree))
+        minutes.append(float(minute))
+        seconds.append(float(second))
+    continue  # Skip further checks for this entry since we already extracted the full set
+
+
+
+
