@@ -132,3 +132,8 @@ if match_full:
         seconds.append(float(second))
 
 
+case 1: North 72°07'56" East
+case 2: North 87°57' 34" East
+case 3: South 02° 02' 26" East
+
+
