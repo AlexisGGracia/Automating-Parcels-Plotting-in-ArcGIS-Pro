@@ -1,14 +1,12 @@
-# This code allows you to draw the parcels into an existing layer in arcGIS Pro. 
-
+#uploading necessary libraries
 import math as mt
 import numpy as np
 import re
 import arcpy
 from datetime import datetime
 
-
 # Loading data from text file
-txt_file = r"C:\Users\alexis.graciarodrigu\Desktop\Yenis Project\Parcel Documents\TXT Files ready\special warranty deed.txt"
+txt_file = r"C:\Users\alexis.graciarodrigu\Desktop\Temporary parcel documentation\Easement - Hike & Bike.txt"
 
 # Read the file and split into words
 try:
@@ -22,8 +20,12 @@ except:
 content = text.split()
 
 # Initial coordinates
-start_x = 2999879.56
-start_y = 13876427.25
+x = '3,198,573.01' #X input (initial point)
+y = '13,788,003.47 '#Y input (initial point)
+
+#removing the commasnd turning it into a float
+start_x = float(x.replace(",", ""))
+start_y = float(y.replace(",", ""))
 
 #initializing empty variables
 degrees = []
@@ -94,7 +96,8 @@ for i in range(len(content)):
             seconds_value = re.sub(r'\D', '', content[i - 1])  # Remove non-digit characters
             if seconds_value:
                 seconds.append(float(seconds_value))
-              
+
+
 #Extracting the distances that correspond to each coordinate
 for i in range(len(content)):
     if content[i] in ['distance', 'DISTANCE', 'line,', 'Line,', 'Line', 'Lot', 'lot', 'right-of-way']:
@@ -138,12 +141,11 @@ for i in range(len(content)):
                 except ValueError:
                      pass  # Ignore if conversion fails
 
-    elif content[i] in ['-', 'WEST-', 'EAST-', 'West,', 'East,', 'East']:      
+    elif content[i] in ['-', 'WEST-', 'West', 'EAST-', 'West,', 'East,', 'East']:   
         if i + 1 < len(content):
             if content[i] == ['-'] and content[i-1] != ['West', 'WEST', 'West,', 'East','EAST', 'East,']:
                 pass
-            elif content[i] == '-' and content[i-1] in ['WEST-', 'EAST-', 'West,', 'East,', 'East', 'WEST']:
-                print(i)
+            elif content[i] == '-' and content[i-1] in ['WEST-', 'EAST-', 'West,', 'East,', 'East', 'WEST', 'West']:
                 distance_str = content[i + 1].strip(' feet;')  # Clean up the string
                 try:
                     distances.append(float(distance_str))
@@ -155,6 +157,14 @@ for i in range(len(content)):
                     distances.append(float(distance_str))
                 except ValueError:
                     pass  # Ignore if conversion fails
+
+for i in range(len(distances)):
+    if len(distances) > len(degrees) and i >= 1:
+        # print('A consecutive repeated value has been removed from the list of distances')
+        # print('The extra value does not correspond to any DMS and has been mentioned to verbally describe a direction')
+        if distances[i] == distances[i-1]:
+            distances.remove(distances[i])
+
 
 #Checks to confirm it did not repeated a distances based on file txt format
 for i in range(len(distances)):
@@ -221,6 +231,7 @@ for i in range(len(content)):
             seconds_value = match_seconds_symbol[0] if match_seconds_symbol else match_seconds_word[0]
             directions.append('w')
 
+
 #Extracts arc length for curves when included
 for i in range(len(content)):
     if content[i] in ['arc']:
@@ -237,7 +248,9 @@ for i in range(len(content)):
         except ValueError:
             pass #skip if conversion fails
 
+
 #Extracts the degrees, minutes, seconds for the curves
+#Additional Note: This part is not being used by the code but it will be used once curves are incorporated into the process
 for i in range(len(content)):
     #case 1: curve angles are mentioned as delta angles
     if content[i] == 'delta' and content[i+1] == 'angle':
@@ -297,6 +310,7 @@ print('Delta seconds', DMS_seconds_curves)
 direction_latitude = []
 direction_longitude = []
 
+
 for i in range(len(directions)):
     if i % 2 == 0:
         direction_latitude.append(directions[i])
@@ -323,7 +337,8 @@ def calculate_bearing_angle(degrees, minutes, seconds, direction_latitude, direc
         bearing_angle = 360 - dd
 
     return bearing_angle
-  
+
+
 bearing_angle = []
 for i in range(len(degrees)):
     bearing = calculate_bearing_angle(degrees[i], minutes[i], seconds[i], direction_latitude[i], direction_longitude[i])
@@ -336,7 +351,8 @@ def cartesian_converter (bearing_angle, distance):
     y = distance*mt.sin(angle)
 
     return x,y
-  
+
+
 X = [start_x]
 Y = [start_y]
 # Accumulate coordinates correctly
@@ -363,30 +379,33 @@ arcpy.env.workspace = r'C:\Users\alexis.graciarodrigu\Desktop\PID.sde'
 # Use double backslashes or raw string format to avoid issues with escape characters
 fc = r'C:\Users\alexis.graciarodrigu\Desktop\PID.sde\HCPID_GDB.PID.Land\HCPID_GDB.PID.RPD_HCOwnedProperty'
 
+
 # Start an edit session
 edit = arcpy.da.Editor(arcpy.env.workspace)
 
+# Define a polygon using the points (make sure the first and last points are the same to close the polygon)
+polygon_points = coordinates + [coordinates[0]]  # Closing the loop
+# basepath = r"C:\Users\alexis.graciarodrigu\Desktop\outputGDB"
 
-#Insert the parcel using the points generated named as coordinates with try, except, finally
 try:
     # Start the edit operation
-    edit.startEditing(False, True)  # (no undo, allow edits)    #unlocks the file in the data and allows me to edit it. This is crucial if files in the database are locked
+    edit.startEditing(False, True)  # (no undo, allow edits on the layer)
 
     # Start an edit operation
-    edit.startOperation()      
+    edit.startOperation()
 
     # Define a polygon using the points (make sure the first and last points are the same to close the polygon)
     polygon_points = coordinates + [coordinates[0]]  # Closing the loop
 
-    # Insert the polygon into the existing feature class
+    # Insert the polygon into the feature class (HCPID_GDB.PID.RPD.HCOwnedProperty)
     with arcpy.da.InsertCursor(fc, ['SHAPE@']) as cursor:
         array = arcpy.Array([arcpy.Point(x, y) for x, y in polygon_points])
         polygon = arcpy.Polygon(array, spatial_ref)
         cursor.insertRow([polygon])
     
-    print("Success!.")
+    print("Parcel drawn successfully.")
 
-    # Complete the edit operation
+    # Complete the edit operation (Locks the file again once the parcel has been plotted)
     edit.stopOperation()
 except Exception as e:
     print(f"Error occurred: {e}")
@@ -395,4 +414,3 @@ except Exception as e:
 finally:
     # Stop editing session
     edit.stopEditing(True)  # Save changes
-
