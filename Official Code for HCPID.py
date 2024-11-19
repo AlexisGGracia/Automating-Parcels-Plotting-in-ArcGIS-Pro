@@ -6,7 +6,7 @@ import arcpy
 from datetime import datetime
 
 # Loading data from text file
-txt_file = r"C:\Users\alexis.graciarodrigu\Desktop\Yenis Project\Parcel Documents\TXT Files ready\Houmont Park Subdivision Drainage Improvements - 2018, Tract 13.txt"
+txt_file = r"C:\Users\alexis.graciarodrigu\Desktop\Yenis Project\Parcel Documents\TXT Files ready\FILE NAME.txt"
 
 # Read the file and split into words
 try:
