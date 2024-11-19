@@ -376,53 +376,53 @@ for i in range(len(bearing_angle)):
     Y.append(new_y)
 
 coordinates = list(zip(X, Y))
-# print(coordinates)
+print(coordinates)
 
-# # Path to geodatabase and feature class
-# output_gdb = r"C:\Users\alexis.graciarodrigu\Desktop\HCPropertyInventory_Pro.gdb"
+# Path to geodatabase and feature class
+output_gdb = r"C:\Users\alexis.graciarodrigu\Desktop\HCPropertyInventory_Pro.gdb"
 
-# # Set spatial reference
-# spatial_ref = arcpy.SpatialReference(2278)
+# Set spatial reference
+spatial_ref = arcpy.SpatialReference(2278)
 
-# # Set the workspace
-# arcpy.env.workspace = r'C:\Users\alexis.graciarodrigu\Desktop\PID.sde'
+# Set the workspace
+arcpy.env.workspace = r'C:\Users\alexis.graciarodrigu\Desktop\PID.sde'
 
-# # Define the full path to the feature class
-# # Use double backslashes or raw string format to avoid issues with escape characters
-# fc = r'C:\Users\alexis.graciarodrigu\Desktop\PID.sde\HCPID_GDB.PID.Land\HCPID_GDB.PID.RPD_HCOwnedProperty'
+# Define the full path to the feature class
+# Use double backslashes or raw string format to avoid issues with escape characters
+fc = r'C:\Users\alexis.graciarodrigu\Desktop\PID.sde\HCPID_GDB.PID.Land\HCPID_GDB.PID.RPD_HCOwnedProperty'
 
 
-# # Start an edit session
-# edit = arcpy.da.Editor(arcpy.env.workspace)
+# Start an edit session
+edit = arcpy.da.Editor(arcpy.env.workspace)
 
-# # Define a polygon using the points (make sure the first and last points are the same to close the polygon)
-# polygon_points = coordinates + [coordinates[0]]  # Closing the loop
-# # basepath = r"C:\Users\alexis.graciarodrigu\Desktop\outputGDB"
+# Define a polygon using the points (make sure the first and last points are the same to close the polygon)
+polygon_points = coordinates + [coordinates[0]]  # Closing the loop
+# basepath = r"C:\Users\alexis.graciarodrigu\Desktop\outputGDB"
 
-# try:
-#     # Start the edit operation
-#     edit.startEditing(False, True)  # (no undo, allow edits on the layer)
+try:
+    # Start the edit operation
+    edit.startEditing(False, True)  # (no undo, allow edits on the layer)
 
-#     # Start an edit operation
-#     edit.startOperation()
+    # Start an edit operation
+    edit.startOperation()
 
-#     # Define a polygon using the points (make sure the first and last points are the same to close the polygon)
-#     polygon_points = coordinates + [coordinates[0]]  # Closing the loop
+    # Define a polygon using the points (make sure the first and last points are the same to close the polygon)
+    polygon_points = coordinates + [coordinates[0]]  # Closing the loop
 
-#     # Insert the polygon into the feature class (HCPID_GDB.PID.RPD.HCOwnedProperty)
-#     with arcpy.da.InsertCursor(fc, ['SHAPE@']) as cursor:
-#         array = arcpy.Array([arcpy.Point(x, y) for x, y in polygon_points])
-#         polygon = arcpy.Polygon(array, spatial_ref)
-#         cursor.insertRow([polygon])
+    # Insert the polygon into the feature class (HCPID_GDB.PID.RPD.HCOwnedProperty)
+    with arcpy.da.InsertCursor(fc, ['SHAPE@']) as cursor:
+        array = arcpy.Array([arcpy.Point(x, y) for x, y in polygon_points])
+        polygon = arcpy.Polygon(array, spatial_ref)
+        cursor.insertRow([polygon])
     
-#     print("Parcel drawn successfully.")
+    print("Parcel drawn successfully.")
 
-#     # Complete the edit operation (Locks the file again once the parcel has been plotted)
-#     edit.stopOperation()
-# except Exception as e:
-#     print(f"Error occurred: {e}")
-#     # If an error occurs, abort the edit operation
-#     edit.abortOperation()
-# finally:
-#     # Stop editing session
-#     edit.stopEditing(True)  # Save changes
+    # Complete the edit operation (Locks the file again once the parcel has been plotted)
+    edit.stopOperation()
+except Exception as e:
+    print(f"Error occurred: {e}")
+    # If an error occurs, abort the edit operation
+    edit.abortOperation()
+finally:
+    # Stop editing session
+    edit.stopEditing(True)  # Save changes
