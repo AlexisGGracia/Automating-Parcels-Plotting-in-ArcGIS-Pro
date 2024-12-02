@@ -58,7 +58,7 @@ for i in range(len(content)):
     
     # Check if the current word indicates degrees in different formats
     if content[i] in ['degrees', 'deg.', 'DEG.', 'DEG .', 'DEG'] and content[i-4] != 'delta' and content[i-3] != 'angle':
-        if content[i - 2] in ['South', 'south', 'SOUTH', 'North', 'north', 'NORTH']:
+        if content[i - 2] in ['South', 'south', 'SOUTH', 'North', 'north', 'NORTH', 'N', 'S']:
             # Look at the previous word (if available) for the number
             if i > 0:
                 degrees_value = re.sub(r'\D', '', content[i - 1])  # Remove non-digit characters
@@ -67,19 +67,19 @@ for i in range(len(content)):
     
     # Check if the current word contains a number with the degree symbol
     match_degrees = re.findall(r'(\d+)°', content[i])
-    if match_degrees and content[i - 1] in ['South', 'south', 'SOUTH', 'North', 'north', 'NORTH']:
+    if match_degrees and content[i - 1] in ['South', 'south', 'SOUTH', 'North', 'north', 'NORTH','N', 'S']:
         degrees.extend([float(m) for m in match_degrees])
     
     # Check if the current word contains a number with the minute symbol
     match_minutes = re.findall(r'(\d+)\'', content[i])
-    if match_minutes and content[i - 2] in ['South', 'south', 'SOUTH', 'North', 'north', 'NORTH']:
+    if match_minutes and content[i - 2] in ['South', 'south', 'SOUTH', 'North', 'north', 'NORTH', 'N', 'S']:
         minutes.extend([float(m) for m in match_minutes])
 
     # Check if the current word contains a number with the second symbol
     match_seconds = re.findall(r'(\d+)"', content[i])               #defines the number next to '
     minutes_value_checking = re.findall(r'(\d+)\'', content[i-1])   #defines the number next to "
     match_degrees = re.findall(r'(\d+)°', content[i-2])             #defines the number next to °
-    if minutes_value_checking and match_degrees and content[i + 1] in ['West', 'west', 'WEST','West,', 'East', 'east', 'EAST', 'East,']:                    #if statements checks that the seconds extracted is next to minutes and degrees             
+    if minutes_value_checking and match_degrees and content[i + 1] in ['West', 'west', 'WEST','West,', 'East', 'east', 'EAST', 'East,', 'W', 'E']:                    #if statements checks that the seconds extracted is next to minutes and degrees             
         # print(content[i])
         seconds.extend([float(m) for m in match_seconds])
 
@@ -155,9 +155,9 @@ for i in range(len(content)):
 
     elif content[i] in ['-', 'WEST-', 'West', 'EAST-', 'West,', 'East,', 'East']:   
         if i + 1 < len(content):
-            if content[i] == ['-'] and content[i-1] != ['West', 'WEST', 'West,', 'East','EAST', 'East,']:
+            if content[i] == ['-'] and content[i-1] != ['West', 'WEST', 'West,', 'East','EAST', 'East,', 'W', 'E']:
                 pass
-            elif content[i] == '-' and content[i-1] in ['WEST-', 'EAST-', 'West,', 'East,', 'East', 'WEST', 'West']:
+            elif content[i] == '-' and content[i-1] in ['WEST-', 'EAST-', 'West,', 'East,', 'East', 'WEST', 'West', 'W', 'E']:
                 distance_str = content[i + 1].strip(' feet;')  # Clean up the string
                 try:
                     distances.append(float(distance_str))
@@ -170,13 +170,6 @@ for i in range(len(content)):
                 except ValueError:
                     pass  # Ignore if conversion fails
 
-for i in range(len(distances)):
-    if len(distances) > len(degrees) and i >= 1:
-        # print('A consecutive repeated value has been removed from the list of distances')
-        # print('The extra value does not correspond to any DMS and has been mentioned to verbally describe a direction')
-        if distances[i] == distances[i-1]:
-            distances.remove(distances[i])
-
 
 #Checks to confirm it did not repeated a distances based on file txt format
 for i in range(len(distances)):
@@ -188,7 +181,7 @@ for i in range(len(distances)):
 
 #Extracting the directions
 for i in range(len(content)):
-    if content[i] in ['North', 'NORTH', '.North', '.NORTH']:
+    if content[i] in ['North', 'NORTH', '.North', '.NORTH', 'N']:
         # Look ahead at the next word(s) for the number (degree) and handle both cases
         next_word = content[i + 1] if i + 1 < len(content) else ""
 
@@ -203,7 +196,7 @@ for i in range(len(content)):
             directions.append('n')  # Append the direction 'n' for North
         # print(content[i])
 
-    elif content[i] in ['South', 'SOUTH', 'South', '.South', '.SOUTH']:
+    elif content[i] in ['South', 'SOUTH', 'South', '.South', '.SOUTH', 'S']:
         # Look ahead at the next word(s) for the number (degree) and handle both cases
         next_word = content[i + 1] if i + 1 < len(content) else ""
         # Case 1: The degree symbol is present (e.g., "87°")
@@ -217,7 +210,7 @@ for i in range(len(content)):
             directions.append('s')  # Append the direction 'n' for North
         # print(content[i])
 
-    elif content[i] in ['East', 'EAST-',  'East,', 'EAST,']:
+    elif content[i] in ['East', 'EAST-',  'East,', 'EAST,', 'East.', 'E']:
     
         previous_word = content[i-1] if i - 1 >= 0 else ""
         #case 1: The seconds symbol is present ( e.g., "87' ")
@@ -231,7 +224,7 @@ for i in range(len(content)):
             directions.append('e')
 
 
-    elif content[i] in ['West', 'WEST-',  'West,', 'WEST,', 'WEST']:
+    elif content[i] in ['West', 'WEST-',  'West,', 'WEST,', 'WEST', 'West.', 'W']:
         previous_word = content[i-1] if i - 1 >= 0 else ""
         #case 1: The seconds symbol is present ( e.g., "87' ")
         match_seconds_symbol = re.findall(r'(\d+)"', previous_word)
@@ -379,17 +372,17 @@ coordinates = list(zip(X, Y))
 print(coordinates)
 
 # Path to geodatabase and feature class
-output_gdb = r"C:\Users\alexis.graciarodrigu\Desktop\HCPropertyInventory_Pro.gdb"
+output_gdb = r'C:\Users\ALEXIS.GRACIARODRIGU\Desktop\HCPropertyInventory_Pro.gdb'
 
 # Set spatial reference
 spatial_ref = arcpy.SpatialReference(2278)
 
 # Set the workspace
-arcpy.env.workspace = r'C:\Users\alexis.graciarodrigu\Desktop\PID.sde'
+arcpy.env.workspace = r'C:\Users\ALEXIS.GRACIARODRIGU\Desktop\SQLServer-svpitcgisdb01-HCPID_GDB(PID).sde'
 
 # Define the full path to the feature class
 # Use double backslashes or raw string format to avoid issues with escape characters
-fc = r'C:\Users\alexis.graciarodrigu\Desktop\PID.sde\HCPID_GDB.PID.Land\HCPID_GDB.PID.RPD_HCOwnedProperty'
+fc = r'\\fs.hc.hctx.net\Shares\ENG\EES and Organizational Effectiveness\GIS Group\7. Other Folders\GIS_Data\ProjectData\RightofWay\RPD Deed Emails\HCPropertyInventory_Pro\PID.sde\HCPID_GDB.PID.Land\HCPID_GDB.PID.RPD_HCOwnedProperty'
 
 
 # Start an edit session
@@ -397,7 +390,6 @@ edit = arcpy.da.Editor(arcpy.env.workspace)
 
 # Define a polygon using the points (make sure the first and last points are the same to close the polygon)
 polygon_points = coordinates + [coordinates[0]]  # Closing the loop
-# basepath = r"C:\Users\alexis.graciarodrigu\Desktop\outputGDB"
 
 try:
     # Start the edit operation
@@ -419,10 +411,11 @@ try:
 
     # Complete the edit operation (Locks the file again once the parcel has been plotted)
     edit.stopOperation()
+#     edit.stopEditing(True)  # Save changes
 except Exception as e:
     print(f"Error occurred: {e}")
     # If an error occurs, abort the edit operation
     edit.abortOperation()
 finally:
-    # Stop editing session
+#     # Stop editing session
     edit.stopEditing(True)  # Save changes
